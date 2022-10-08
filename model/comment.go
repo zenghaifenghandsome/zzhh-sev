@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-//father-comment
+// father-comment
 type Comment struct {
 	gorm.Model
 	BcID       uint   `gorm:"type:int;not null" json:"BcID"`
@@ -18,7 +18,7 @@ type Comment struct {
 	LowNumb    int    `gomr:"type:int default 0" json:"LowNumb"`
 }
 
-//child-comment
+// child-comment
 type CommentReply struct {
 	gorm.Model
 	BcID       uint   `gorm:"type:int;not null" json:"BcID"`
@@ -31,7 +31,7 @@ type CommentReply struct {
 	LowNumb    int    `gomr:"type:int default 0" json:"LowNumb"`
 }
 
-//get-comment
+// get-comment
 func GetComment(bcID string) ([]Comment, int) {
 	var comments []Comment
 	result := db.Where("bc_id = ?", bcID).Find(&comments)
@@ -41,12 +41,17 @@ func GetComment(bcID string) ([]Comment, int) {
 	return comments, errormessages.SUCCESS
 }
 
-//get-commentReply
-func GetCommentReply() {
-
+// get-commentReply
+func GetCommentReply(bcCommentID string) ([]CommentReply, int) {
+	var commentReplys []CommentReply
+	result := db.Where("comment_id = ?", bcCommentID).Find(&commentReplys)
+	if result.Error != nil {
+		return nil, errormessages.ERROR_REPLYCOMMENT_GET_ERROR
+	}
+	return commentReplys, errormessages.ERROR_REPLYCOMMENT_GET_SUCCESS
 }
 
-//add to comment
+// add to comment
 func AddComment(com *Comment) int {
 	result := db.Create(&com)
 	if result.Error != nil {
@@ -55,7 +60,11 @@ func AddComment(com *Comment) int {
 	return errormessages.SUCCESS
 }
 
-//add to commentReply
-func AddCommentReply() {
-
+// add to commentReply
+func AddCommentReply(reply *CommentReply) int {
+	result := db.Create(&reply)
+	if result.Error != nil {
+		return errormessages.ERROR_ADD_REPLYCOMMENT_ERROR
+	}
+	return errormessages.ERROR_ADD_REPLYCOMMENT_SUCCESS
 }

@@ -52,6 +52,9 @@ func InitRouter() {
 		bianchengRouter.GET("/okAllBiancheng", api.GetOkAllBiancheng)
 		bianchengRouter.GET("/setOkBiancheng", api.SetOk)
 		bianchengRouter.GET("/setNoBiancheng", api.SetNo)
+		bianchengRouter.GET("/comment/replyComment", api.GetReplyComments)
+		bianchengRouter.POST("/comment/replyComment", api.AddReplyComment)
+
 	}
 
 	hell := r.Group("/test")
@@ -101,5 +104,5 @@ func InitRouter() {
 		blogRouter.GET("/allOkBlog", api.GetAllOkBlogs)
 	}
 	fmt.Println(config.HttpPort)
-	r.Run(":9000")
+	r.Run(":8000")
 }

@@ -26,7 +26,11 @@ const (
 	//comment
 	ERROR_COMMENT_GET_ERROR = 4001
 	ERROR_ADD_COMMENT_ERROR = 4002
-
+	//replyComment
+	ERROR_REPLYCOMMENT_GET_ERROR   = 4102
+	ERROR_REPLYCOMMENT_GET_SUCCESS = 4101
+	ERROR_ADD_REPLYCOMMENT_ERROR   = 4103
+	ERROR_ADD_REPLYCOMMENT_SUCCESS = 4104
 	//register
 	USERNAME_NULL       = 5001
 	PASSWORD_NULL       = 5002
@@ -102,9 +106,13 @@ var codeMsg = map[int]string{
 	SUCCESS_DELETBLOG:                "博客删除成功",
 	ERROR_SAVECODE:                   "保存验证码失败，联系站长修复后再验证",
 	SUCCESS_SAVECODE:                 "保存验证码成功，可以验证",
+	ERROR_REPLYCOMMENT_GET_ERROR:     "获取回复失败",
+	ERROR_REPLYCOMMENT_GET_SUCCESS:   "获取回复成功",
+	ERROR_ADD_REPLYCOMMENT_ERROR:     "回复失败",
+	ERROR_ADD_REPLYCOMMENT_SUCCESS:   "回复成功",
 }
 
-//获取错误信息
+// 获取错误信息
 func GetErrMsg(code int) string {
 	return codeMsg[code]
 }
