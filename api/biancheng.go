@@ -59,7 +59,7 @@ func SetNo(c *gin.Context) {
 	})
 }
 
-//新增编程导航
+// 新增编程导航
 func AddBianCheng(c *gin.Context) {
 	var biancheng model.BianCheng
 	_ = c.ShouldBindJSON(&biancheng)
@@ -67,22 +67,25 @@ func AddBianCheng(c *gin.Context) {
 	code = model.CheckBC(biancheng.Title)
 	if code != errormessages.SUCCESS {
 		c.JSON(http.StatusOK, gin.H{
-			"status":  code,
-			"message": "biancheng 已存在",
+			"status": code,
+			"msg":    "biancheng 已存在",
 		})
+	} else {
+		err := model.AddBiancheng(&biancheng)
+		if err != errormessages.SUCCESS {
+			c.JSON(http.StatusOK, gin.H{
+				"status": code,
+				"msg":    "biancheng 写入数据库失败",
+			})
+		} else {
+			c.JSON(http.StatusOK, gin.H{
+				"status": code,
+				"data":   biancheng,
+				"msg":    errormessages.GetErrMsg(code),
+			})
+		}
 	}
-	err := model.AddBiancheng(&biancheng)
-	if err != errormessages.SUCCESS {
-		c.JSON(http.StatusOK, gin.H{
-			"status":  code,
-			"message": "biancheng 写入数据库失败",
-		})
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"status":  code,
-		"data":    biancheng,
-		"message": errormessages.GetErrMsg(code),
-	})
+
 }
 
 func GetBianchengInfo(c *gin.Context) {
@@ -126,7 +129,7 @@ func LikeBiancheng(c *gin.Context) {
 	})
 }
 
-//delet bianchengdaohang
+// delet bianchengdaohang
 func DeletBiancheng(c *gin.Context) {
 	fmt.Println("进来了")
 	bcid := c.Query("id")

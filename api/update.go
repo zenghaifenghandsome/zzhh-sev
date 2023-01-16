@@ -4,58 +4,41 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	errormessages "z-web-sev/utils/errorMessages"
-
-	"mime/multipart"
+	"net/url"
+	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/qiniu/go-sdk/v7/auth/qbox"
-	"github.com/qiniu/go-sdk/v7/storage"
+	"github.com/tencentyun/cos-go-sdk-v5"
 )
 
-var ImageUrl = "http://qiniu.zzhh.asia/"
-var AccessKey = "cztyOFu4ykkkrD4ubQwFAyZkR2gw5WwufdbmVlYM"
-var SecretKey = "MzcQrh0tQRZ1iNj7WSDm72nCLRiFOueApcIj9QL6"
-var Bucket = "zenghaifeng"
-
-func UpDate(c *gin.Context) {
-	file, fileHeader, _ := c.Request.FormFile("imgfile")
-
-	fileSize := fileHeader.Size
-	fmt.Println("++++++++++++++++++++++++++++++++++++++++")
-	imgUrl, err := UpLodeFile(file, fileSize)
-
-	c.JSON(http.StatusOK, gin.H{
-		"status": err,
-		"msg":    errormessages.GetErrMsg(err),
-		"imgUrl": imgUrl,
+func UpDate(ctx *gin.Context) {
+	baseUrl := "https://zengdd-1306364512.cos.ap-shanghai.myqcloud.com"
+	u, _ := url.Parse(baseUrl)
+	b := &cos.BaseURL{BucketURL: u}
+	c := cos.NewClient(b, &http.Client{
+		Transport: &cos.AuthorizationTransport{
+			SecretID:  "AKIDlZByYu40lMkwwlOp26xew0rVwBFE6oNk",
+			SecretKey: "GZiwysdJrGVYP2VnuoX8mPq6B5mFbmmZ",
+		},
 	})
-}
 
-func UpLodeFile(file multipart.File, fileSize int64) (string, int) {
-	putPolicy := storage.PutPolicy{
-		Scope: Bucket,
-	}
-	mac := qbox.NewMac(AccessKey, SecretKey)
-	upToken := putPolicy.UploadToken(mac)
+	//name := "test/objectput.jpg"
 
-	cfg := storage.Config{
-		Zone:          &storage.ZoneHuanan,
-		UseCdnDomains: false,
-		UseHTTPS:      false,
-	}
-
-	PutExtra := storage.PutExtra{}
-
-	formUpaloader := storage.NewFormUploader(&cfg)
-
-	ret := storage.PutRet{}
-
-	err := formUpaloader.PutWithoutKey(context.Background(), &ret, upToken, file, fileSize, &PutExtra)
+	//f, err := os.Open("C://Users//zengh//Desktop//5c3c751112b7a119a4d696419677cbf.jpg")
+	f, fheader, err := ctx.Request.FormFile("imgfile")
+	name := fmt.Sprintf("%d%s", time.Now().Unix(), fheader.Filename)
 	if err != nil {
-		return "", errormessages.ERROR
+		panic(err)
 	}
-	url := ImageUrl + ret.Key
-	return url, errormessages.SUCCESS
+	defer f.Close()
+	_, err2 := c.Object.Put(context.Background(), name, f, nil)
+	if err2 != nil {
+		panic(err)
+	}
 
+	ctx.JSON(http.StatusOK, gin.H{
+		"status": 200,
+		"msg":    "上传成功",
+		"url":    baseUrl + "/" + name,
+	})
 }

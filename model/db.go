@@ -12,7 +12,7 @@ var db *gorm.DB
 var err error
 
 func InitDb() {
-	dblogin := "root:niganshenmelo1@tcp(101.35.101.200:3306)/zzhh?charset=utf8mb4&parseTime=True&loc=Local"
+	dblogin := "root:zzz000@tcp(localhost:3306)/zeng?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err = gorm.Open(mysql.Open(dblogin), &gorm.Config{})
 	if err != nil {
 		fmt.Println("连接数据库失败，请检查参数：", err)

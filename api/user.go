@@ -119,7 +119,7 @@ func Login(c *gin.Context) {
 
 }
 
-//查询用户信息
+// 查询用户信息
 func GetUser(c *gin.Context) {
 	var userid int
 	c.ShouldBindJSON(&userid)
@@ -132,7 +132,7 @@ func GetUser(c *gin.Context) {
 
 }
 
-//updata userinfo func
+// updata userinfo func
 func UpDataUserInfo(c *gin.Context) {
 	var userinfo model.UserInfo
 	c.ShouldBindJSON(&userinfo)
@@ -147,4 +147,43 @@ func UpDataUserInfo(c *gin.Context) {
 		"status":  200,
 		"message": "用户信息更新成功",
 	})
+}
+
+func GetUserInfo(c *gin.Context) {
+	userid := c.Query("userid")
+	userinfo, code := model.GetUserInfo(userid)
+	if code != errormessages.SUCCESS {
+		c.JSON(http.StatusOK, gin.H{
+			"status": code,
+			"msg":    errormessages.GetErrMsg(code),
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"status":   code,
+			"msg":      errormessages.GetErrMsg(code),
+			"userinfo": userinfo,
+		})
+	}
+}
+
+// 修改资料
+func UpDataUserInfoOneField(c *gin.Context) {
+	userid := c.Query("userid")
+	field := c.Query("field")
+	newDate := c.Query("newDate")
+
+	i := model.UpDataUserInfoOneField(userid, field, newDate)
+
+	if i != errormessages.SUCCESS {
+		c.JSON(http.StatusOK, gin.H{
+			"status": 400,
+			"msg":    "更新失败",
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"status": 200,
+			"msg":    "更新成功",
+		})
+	}
+
 }

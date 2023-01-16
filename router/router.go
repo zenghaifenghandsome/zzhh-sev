@@ -17,6 +17,7 @@ func InitRouter() {
 	r.Use(moddleware.Cors())
 	router := r.Group("")
 	{
+		router.POST("/update", api.UpDate)
 		router.GET("/main", api.GetMainPage)
 	}
 	//注册
@@ -36,6 +37,8 @@ func InitRouter() {
 	userRouter := r.Group("/user")
 	{
 		userRouter.POST("/updatauserinfo", api.UpDataUserInfo)
+		userRouter.GET("/getUserInfo", api.GetUserInfo)
+		userRouter.GET("/updataUserInfoOneField", api.UpDataUserInfoOneField)
 	}
 
 	//bianchengdaohang
@@ -43,7 +46,7 @@ func InitRouter() {
 	{
 		bianchengRouter.GET("", api.GetAllBiancheng)
 		bianchengRouter.POST("", api.AddBianCheng)
-		bianchengRouter.POST("/update", api.UpDate)
+		//bianchengRouter.POST("/update", api.UpDate)
 		bianchengRouter.GET("/getOnlybiancheng", api.GetBianchengInfo)
 		bianchengRouter.POST("/like", api.LikeBiancheng)
 		bianchengRouter.POST("/comment", api.AddComment)

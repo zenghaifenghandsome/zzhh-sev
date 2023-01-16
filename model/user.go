@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-//用户基本信息表-注册表
+// 用户基本信息表-注册表
 type User struct {
 	gorm.Model
 	Username string `gorm:"type:varchar(20);not null" json:"username"`
@@ -21,7 +21,7 @@ type User struct {
 	Role     string `gorm:"type:varchar(10);not null" json:"role"`
 }
 
-//用户详细信息表
+// 用户详细信息表
 type UserInfo struct {
 	UserID   int    `gorm:"type:int;unique;not null;primaryKey" json:"userid"`
 	Username string `gorm:"type:varchar(20);not null" json:"username"`
@@ -36,7 +36,7 @@ type UserInfo struct {
 	Role     string `gorm:"type:varchar(10);not null" json:"role"`
 }
 
-//用户登录状态表
+// 用户登录状态表
 type UserState struct {
 	gorm.Model
 	UserId     int    `gorm:"type:int" jason:"userid"`
@@ -44,7 +44,7 @@ type UserState struct {
 	Token      string `gorm:"type:varchar(50)" json:"token"`
 }
 
-//查询用户是否存在
+// 查询用户是否存在
 func CheckUser(name string) int {
 	var user User
 	fmt.Println("serch User start............")
@@ -56,7 +56,7 @@ func CheckUser(name string) int {
 	return errormessages.SUCCESS
 }
 
-//注册用户
+// 注册用户
 func CreateUser(data *User) int {
 	data.Password = ScriptPW(data.Password)
 	res := db.Create(&data)
@@ -67,7 +67,6 @@ func CreateUser(data *User) int {
 	return errormessages.SUCCESS
 }
 
-//
 func CreateUserInfo(data *UserInfo) int {
 	res := db.Create(&data)
 	err := res.Error
@@ -77,7 +76,7 @@ func CreateUserInfo(data *UserInfo) int {
 	return errormessages.SUCCESS
 }
 
-//密码加密
+// 密码加密
 func ScriptPW(password string) string {
 	const KeyLen = 10
 	var salt = make([]byte, 8)
@@ -90,7 +89,7 @@ func ScriptPW(password string) string {
 	return fpw
 }
 
-//判断是否登录
+// 判断是否登录
 func IsLogin(token string) int {
 	if len(token) > 0 {
 		return errormessages.SUCCESS
@@ -98,7 +97,7 @@ func IsLogin(token string) int {
 	return errormessages.ERROR
 }
 
-//登录
+// 登录
 func CheckLogin(username string, password string) int {
 	var user User
 	db.Where("username = ?", username).First(&user)
@@ -115,7 +114,7 @@ func CheckLogin(username string, password string) int {
 
 }
 
-//添加用户信息到用户登录状态表
+// 添加用户信息到用户登录状态表
 func AddUserToUserLoginState(user User) int {
 	var userstate UserState
 	userstate.UserId = int(user.ID)
@@ -138,7 +137,7 @@ func AddUserToUserLoginState(user User) int {
 
 }
 
-//查询用户信息
+// 查询用户信息
 func GetUser(userid int) (int, UserInfo) {
 	var user UserInfo
 	db.Where("user_id = ?", userid).First(&user)
@@ -155,7 +154,7 @@ func GetUserID(username string) (int, int) {
 	return errormessages.SUCCESS, int(user.ID)
 }
 
-//updata userInfo func
+// updata userInfo func
 func UpDataUserInfo(userinfo UserInfo) int {
 
 	result := db.Model(&userinfo).Updates(map[string]interface{}{
@@ -171,6 +170,26 @@ func UpDataUserInfo(userinfo UserInfo) int {
 	})
 	if result.Error != nil {
 		return errormessages.ERROR_UPDATA_USERINFO_FAIL
+	}
+	return errormessages.SUCCESS
+}
+
+// 获取userInfo
+func GetUserInfo(userid string) (UserInfo, int) {
+	var userinfo UserInfo
+	result := db.First(&userinfo, userid)
+	if result.Error != nil {
+		return userinfo, 400
+	}
+	return userinfo, errormessages.SUCCESS
+
+}
+
+func UpDataUserInfoOneField(userid string, field string, newDate string) int {
+	var userinfo UserInfo
+	result := db.Model(&userinfo).Where("user_id = ?", userid).Update(field, newDate)
+	if result.Error != nil {
+		return 400
 	}
 	return errormessages.SUCCESS
 }
