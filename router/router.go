@@ -1,18 +1,17 @@
 package router
 
 import (
-	"fmt"
 	"net/http"
 	"z-web-sev/api"
-	"z-web-sev/config"
 	"z-web-sev/moddleware"
 	errormessages "z-web-sev/utils/errorMessages"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 func InitRouter() {
-	gin.SetMode(config.AppMode)
+	gin.SetMode(viper.GetString("App_mode"))
 	r := gin.Default()
 	r.Use(moddleware.Cors())
 	router := r.Group("")
@@ -106,6 +105,6 @@ func InitRouter() {
 		blogRouter.GET("/setNoBlog", api.SetBlogStatusNo)
 		blogRouter.GET("/allOkBlog", api.GetAllOkBlogs)
 	}
-	fmt.Println(config.HttpPort)
-	r.Run(":8000")
+	//fmt.Println(config.HttpPort)
+	r.Run(viper.GetString("server.Http_port"))
 }
