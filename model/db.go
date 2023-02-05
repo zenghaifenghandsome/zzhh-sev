@@ -24,7 +24,20 @@ func InitDb() {
 		panic(err)
 	} else {
 		fmt.Println("sucsess..........................")
-		resErr := db.AutoMigrate(&User{}, &UserState{}, &UserInfo{}, &BianCheng{}, &Banner{}, &BianchengLikes{}, &Comment{}, &CommentReply{}, &Blog{}, &BlogAuthor{}, &CheckCode{})
+		resErr := db.AutoMigrate(
+			&User{}, 
+			&UserState{},
+			&UserInfo{}, 
+			&BianCheng{}, 
+			&Banner{}, 
+			&BianchengLikes{}, 
+			&Comment{}, 
+			&CommentReply{}, 
+			&Blog{}, 
+			&BlogAuthor{}, 
+			&CheckCode{},
+			&VideoSource{},
+		)
 		if resErr != nil {
 			fmt.Println(resErr)
 		}

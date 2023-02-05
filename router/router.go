@@ -58,6 +58,12 @@ func InitRouter() {
 		bianchengRouter.POST("/comment/replyComment", api.AddReplyComment)
 
 	}
+	video := r.Group("video")
+	{
+		video.GET("", api.GetVideoList)
+		video.POST("", api.AddVideoSource)
+		video.GET("/proxy", api.VideProxy)
+	}
 
 	hell := r.Group("/test")
 
