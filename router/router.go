@@ -63,6 +63,7 @@ func InitRouter() {
 		video.GET("", api.GetVideoList)
 		video.POST("", api.AddVideoSource)
 		video.GET("/proxy", api.VideProxy)
+		video.GET("/video/videoGet", api.VideoGet)
 	}
 
 	hell := r.Group("/test")
