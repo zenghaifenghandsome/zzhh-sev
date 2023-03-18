@@ -16,7 +16,7 @@ func InitRouter() {
 	r.Use(moddleware.Cors())
 	router := r.Group("")
 	{
-		router.POST("/update", api.UpDate)
+		router.POST("/update", api.UpData)
 		router.GET("/main", api.GetMainPage)
 	}
 	//注册
@@ -64,6 +64,11 @@ func InitRouter() {
 		video.POST("", api.AddVideoSource)
 		video.GET("/proxy", api.VideProxy)
 		video.GET("/video/videoGet", api.VideoGet)
+	}
+	evd := r.Group("evd")
+	{
+		evd.POST("", api.AddEvd)
+		evd.GET("", api.GetAllEvd)
 	}
 
 	hell := r.Group("/test")
