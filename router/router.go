@@ -1,23 +1,22 @@
 package router
 
 import (
-	"fmt"
 	"net/http"
 	"z-web-sev/api"
-	"z-web-sev/config"
 	"z-web-sev/moddleware"
 	errormessages "z-web-sev/utils/errorMessages"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 func InitRouter() {
-	gin.SetMode(config.AppMode)
+	gin.SetMode(viper.GetString("App_mode"))
 	r := gin.Default()
 	r.Use(moddleware.Cors())
 	router := r.Group("")
 	{
-		router.POST("/update", api.UpDate)
+		router.POST("/update", api.UpData)
 		router.GET("/main", api.GetMainPage)
 	}
 	//注册
@@ -58,6 +57,18 @@ func InitRouter() {
 		bianchengRouter.GET("/comment/replyComment", api.GetReplyComments)
 		bianchengRouter.POST("/comment/replyComment", api.AddReplyComment)
 
+	}
+	video := r.Group("video")
+	{
+		video.GET("", api.GetVideoList)
+		video.POST("", api.AddVideoSource)
+		video.GET("/proxy", api.VideProxy)
+		video.GET("/video/videoGet", api.VideoGet)
+	}
+	evd := r.Group("evd")
+	{
+		evd.POST("", api.AddEvd)
+		evd.GET("", api.GetAllEvd)
 	}
 
 	hell := r.Group("/test")
@@ -106,6 +117,6 @@ func InitRouter() {
 		blogRouter.GET("/setNoBlog", api.SetBlogStatusNo)
 		blogRouter.GET("/allOkBlog", api.GetAllOkBlogs)
 	}
-	fmt.Println(config.HttpPort)
-	r.Run(":8000")
+	//fmt.Println(config.HttpPort)
+	r.Run(viper.GetString("server.Http_port"))
 }
